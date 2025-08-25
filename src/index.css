@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+/* CSS Variables for theme colors - these will be set dynamically by ThemeContext */
+:root {
+  /* Background colors */
+  --theme-bg-primary: #0f172a;
+  --theme-bg-secondary: #1e293b;
+  --theme-bg-card: rgba(30, 41, 59, 0.9);
+  --theme-bg-card-hover: rgba(30, 41, 59, 0.95);
+  --theme-bg-control: rgba(71, 85, 105, 0.3);
+  --theme-bg-control-hover: rgba(71, 85, 105, 0.6);
+  --theme-bg-overlay: rgba(0, 0, 0, 0.7);
+  
+  /* Text colors */
+  --theme-text-primary: #f8fafc;
+  --theme-text-secondary: #cbd5e1;
+  --theme-text-muted: #64748b;
+  --theme-text-inverse: #0f172a;
+  
+  /* Border colors */
+  --theme-border-primary: #475569;
+  --theme-border-secondary: rgba(71, 85, 105, 0.4);
+  --theme-border-hover: #64748b;
+  --theme-border-focus: #3b82f6;
+  
+  /* Accent colors */
+  --theme-accent-play: #22c55e;
+  --theme-accent-stop: #ef4444;
+  --theme-accent-play-hover: #16a34a;
+  --theme-accent-stop-hover: #dc2626;
+  --theme-accent-beat-active: #cbd5e1;
+  --theme-accent-beat-downbeat: #f8fafc;
+  --theme-accent-beat-inactive: #475569;
+  --theme-accent-tempo: #ef4444;
+  
+  /* Interactive colors */
+  --theme-interactive-hover: rgba(71, 85, 105, 0.4);
+  --theme-interactive-focus: rgba(59, 130, 246, 0.1);
+  --theme-interactive-active: rgba(51, 65, 85, 0.6);
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--theme-bg-primary);
+  color: var(--theme-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme transition for smooth color changes */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
