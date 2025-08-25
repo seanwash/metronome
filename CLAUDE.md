@@ -36,22 +36,24 @@ All state is managed through the `useMetronome` hook which provides:
 - BPM control (40-240 range with validation)
 - Time signature selection (various signatures from 2/4 to 12/8)
 - Tap tempo functionality with 8-tap averaging
-- Preset save/load system using localStorage
+- Theme state managed via `useTheme` hook and ThemeContext
+- Keyboard shortcuts handled by `useKeyboardShortcuts` hook
 
 ### Component Structure
 
 - **BeatIndicator**: Visual metronome with beat highlighting
 - **TempoControl**: BPM slider and tap tempo button
 - **TimeSignatureSelector**: Dropdown for time signature selection
-- **PresetManager**: Save, load, and delete preset functionality
+- **ThemeSwitcher**: Light/dark theme toggle
 
 ### Key Technical Details
 
 - Uses Radix UI components for consistent, accessible UI elements
-- TypeScript interfaces defined in `src/types/index.ts`
-- Preset data persisted to localStorage with error handling
+- TypeScript interfaces defined in `src/types/index.ts` and `src/types/theme.ts`
+- Theme data persisted to localStorage via ThemeContext
 - Audio timing uses lookahead scheduling to prevent drift
 - Worker blob creation inline (no separate worker files)
+- Keyboard shortcuts support (Space for play/pause)
 
 ### Styling
 
