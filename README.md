@@ -22,3 +22,7 @@ npm run preview # Preview production build
 ```
 
 Built with Vite, React 19, TypeScript, and Tailwind CSS v4.
+
+---
+
+*This is a fun project built with Claude AI for learning and experimentation.*
