@@ -6,7 +6,9 @@ import type {
 } from '../types';
 import {
   DEFAULT_TIME_SIGNATURE, 
-  DEFAULT_BPM 
+  DEFAULT_BPM,
+  DEFAULT_VOLUME,
+  DEFAULT_PITCH_OFFSET
 } from '../types';
 
 export const useMetronome = () => {
@@ -16,7 +18,8 @@ export const useMetronome = () => {
     bpm: DEFAULT_BPM,
     timeSignature: DEFAULT_TIME_SIGNATURE,
     currentBeat: 0,
-    volume: 0.5,
+    volume: DEFAULT_VOLUME,
+    pitchOffset: DEFAULT_PITCH_OFFSET,
   });
 
   // Initialize audio engine
@@ -76,6 +79,18 @@ export const useMetronome = () => {
     setState(prev => ({ ...prev, timeSignature, currentBeat: 0 }));
   }, []);
 
+  const setVolume = useCallback((volume: number) => {
+    const clampedVolume = Math.max(0, Math.min(1, volume));
+    audioEngineRef.current?.setVolume(clampedVolume);
+    setState(prev => ({ ...prev, volume: clampedVolume }));
+  }, []);
+
+  const setPitchOffset = useCallback((pitchOffset: number) => {
+    const clampedPitch = Math.max(-12, Math.min(12, pitchOffset));
+    audioEngineRef.current?.setPitchOffset(clampedPitch);
+    setState(prev => ({ ...prev, pitchOffset: clampedPitch }));
+  }, []);
+
   const tapTempo = useCallback(() => {
     // Simple tap tempo implementation
     const now = Date.now();
@@ -113,6 +128,8 @@ export const useMetronome = () => {
     togglePlay,
     setBpm,
     setTimeSignature,
+    setVolume,
+    setPitchOffset,
     tapTempo,
   };
 };
