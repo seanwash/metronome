@@ -1,4 +1,5 @@
 import type { TimeSignature } from '../types';
+import { DEFAULT_VOLUME } from '../types';
 
 export class MetronomeAudioEngine {
   private audioContext: AudioContext | null = null;
@@ -10,6 +11,8 @@ export class MetronomeAudioEngine {
   private timeSignature: TimeSignature = { beats: 4, noteValue: 4, label: '4/4' };
   private currentBeat = 0;
   private isPlaying = false;
+  private volume = DEFAULT_VOLUME; // Default volume (0-1)
+  private pitchOffset = 0; // semitones, -12 to +12
   private onBeatCallback?: (beat: number) => void;
 
   constructor() {
@@ -68,11 +71,22 @@ export class MetronomeAudioEngine {
     osc.connect(gainNode);
     gainNode.connect(this.audioContext.destination);
 
-    // Different frequencies for downbeat vs regular beat
-    osc.frequency.value = isDownbeat ? 880 : 440;
+    // Different frequencies for downbeat vs regular beat, with pitch offset
+    const baseFreq = isDownbeat ? 880 : 440;
+    // Calculate frequency with pitch offset using equal temperament formula
+    // Each semitone = 2^(1/12) ratio
+    const pitchMultiplier = Math.pow(2, this.pitchOffset / 12);
+    osc.frequency.value = baseFreq * pitchMultiplier;
     
+    // Apply volume control with quadratic scaling for better perceived linearity
+    // Quadratic scaling (volume^2) provides more intuitive volume control than cubic
+    // Base gain of 0.65 targets streaming service levels (-14 to -16 LUFS)
+    // At 70% default: 0.65 * 0.49 = ~0.32 gain (comfortable listening level)
+    // At 100%: 0.65 * 1.0 = 0.65 gain (matches typical music app volumes)
+    const volumeCurve = Math.pow(this.volume, 2);
+    const maxGain = 0.65 * volumeCurve;
     gainNode.gain.setValueAtTime(0, time);
-    gainNode.gain.linearRampToValueAtTime(0.1, time + 0.01);
+    gainNode.gain.linearRampToValueAtTime(maxGain, time + 0.01);
     gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
 
     osc.start(time);
@@ -134,6 +148,14 @@ export class MetronomeAudioEngine {
     this.onBeatCallback = callback;
   }
 
+  setVolume(volume: number) {
+    this.volume = Math.max(0, Math.min(1, volume));
+  }
+
+  setPitchOffset(pitchOffset: number) {
+    this.pitchOffset = Math.max(-12, Math.min(12, pitchOffset));
+  }
+
   getTempo(): number {
     return this.tempo;
   }
@@ -148,6 +170,14 @@ export class MetronomeAudioEngine {
 
   getIsPlaying(): boolean {
     return this.isPlaying;
+  }
+
+  getVolume(): number {
+    return this.volume;
+  }
+
+  getPitchOffset(): number {
+    return this.pitchOffset;
   }
 
   destroy() {
