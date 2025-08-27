@@ -1,9 +1,13 @@
 import { PlayIcon, PauseIcon } from '@radix-ui/react-icons';
 import { useMetronome } from '../hooks/useMetronome';
+import { DEFAULT_VOLUME, DEFAULT_PITCH_OFFSET } from '../types';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import BeatIndicator from './BeatIndicator';
 import TempoControl from './TempoControl';
 import TimeSignatureSelector from './TimeSignatureSelector';
+import { VolumeControl } from './VolumeControl';
+import { PitchControl } from './PitchControl';
+import { ControlCard } from './ControlCard';
 
 export default function Metronome() {
   const {
@@ -11,9 +15,13 @@ export default function Metronome() {
     bpm,
     timeSignature,
     currentBeat,
+    volume,
+    pitchOffset,
     togglePlay,
     setBpm,
     setTimeSignature,
+    setVolume,
+    setPitchOffset,
     tapTempo,
   } = useMetronome();
 
@@ -69,27 +77,47 @@ export default function Metronome() {
 
       {/* Control Panel */}
       <div className="bg-[var(--theme-bg-control)] p-6 rounded-b-2xl border-t border-[var(--theme-border-secondary)]">
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
           {/* Tempo Control Card */}
-          <div className="bg-[var(--theme-bg-control)] rounded-xl p-5 border border-[var(--theme-border-secondary)] hover:border-[var(--theme-border-hover)] transition-all duration-200">
-            <label className="text-xs text-[var(--theme-text-muted)] uppercase tracking-wider mb-4 block text-center font-medium">TEMPO</label>
+          <ControlCard label="TEMPO">
             <TempoControl
               bpm={bpm}
               setBpm={setBpm}
               tapTempo={tapTempo}
             />
-          </div>
+          </ControlCard>
 
           {/* Time Signature Card */}
-          <div className="bg-[var(--theme-bg-control)] rounded-xl p-5 border border-[var(--theme-border-secondary)] hover:border-[var(--theme-border-hover)] transition-all duration-200">
-            <label className="text-xs text-[var(--theme-text-muted)] uppercase tracking-wider mb-4 block text-center font-medium">TIME SIGNATURE</label>
+          <ControlCard label="TIME SIGNATURE">
             <div className="flex justify-center">
               <TimeSignatureSelector
                 timeSignature={timeSignature}
                 setTimeSignature={setTimeSignature}
               />
             </div>
-          </div>
+          </ControlCard>
+
+          {/* Volume Control Card */}
+          <ControlCard 
+            label="VOLUME"
+            onDoubleClick={() => setVolume(DEFAULT_VOLUME)}
+          >
+            <VolumeControl
+              volume={volume}
+              onVolumeChange={setVolume}
+            />
+          </ControlCard>
+
+          {/* Pitch Control Card */}
+          <ControlCard 
+            label="PITCH"
+            onDoubleClick={() => setPitchOffset(DEFAULT_PITCH_OFFSET)}
+          >
+            <PitchControl
+              pitchOffset={pitchOffset}
+              onPitchChange={setPitchOffset}
+            />
+          </ControlCard>
         </div>
       </div>
     </div>
